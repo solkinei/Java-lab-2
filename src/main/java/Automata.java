@@ -1,6 +1,7 @@
+import java.util.ArrayList;
+
 enum STATES {
     OFF,
-    ON,
     WAIT,
     ACCEPT,
     CHECK,
@@ -8,14 +9,28 @@ enum STATES {
 }
 
 class Automata {
-    // Не static! У каждого нового автомата будей свой баланс, а не один общий для всех.
     int cash = 0;
-    String menu[] = {"Espresso", "Americano", "Latte", "Mocco", "Chocolate", "Kotletki s pureshkoy"};
-    int price[] = {5, 8, 10, 8, 7, 20};
+    public ArrayList<String> menu = new ArrayList<String>();
+    ArrayList<Integer> price = new ArrayList<Integer>();
+
+    STATES state;
 
     // Constructor:
     Automata() {
+        state = STATES.OFF;
 
+        menu.add("Espresso");
+        menu.add("Americano");
+        menu.add("Latte");
+        menu.add("Mocco");
+        menu.add("Chocolate");
+        menu.add("Kotletki s pureshkoy");
+        price.add(5);
+        price.add(8);
+        price.add(10);
+        price.add(8);
+        price.add(7);
+        price.add(20);
     }
 
     /*
@@ -32,44 +47,68 @@ cook() - имитация процесса приготовления напит
 finish() - завершение обслуживания пользователя.
 */
 
-    STATES on(STATES state) {
-        return state = STATES.ON;
+    void on() {
+        if (state != STATES.OFF) {        // только выключенный автомат можно включить
+            return;
+        }
+        state = STATES.WAIT;
     }
 
-    STATES off(STATES state) {
-        return state = STATES.OFF;
+    void off() {
+        if (state != STATES.WAIT) {        // только в режиме ожидания автомат можно выключить
+            return;
+        }
+        state = STATES.OFF;
     }
 
-    STATES coin(int insertedCoin, STATES state) {
+    void coin(int insertedCoin) {
+        if (state != STATES.WAIT && state != STATES.ACCEPT) {
+            return;
+        }
         cash += insertedCoin;
-        return state = STATES.ACCEPT;
+        state = STATES.ACCEPT;
     }
 
-    STATES printMenu(STATES state) {
-        for (int i = 0; i < price.length; i++) {
-            System.out.println(i + " - " + menu[i] + " - " + price[i] + "credits");
+    ArrayList<String> printMenu() {
+        return menu;
+    }
+
+    STATES printState() {
+        return state;
+    }
+
+    void choice(int buttonNumber) {
+        if (check(buttonNumber) == true) {
+            cash -= price.get(buttonNumber);
+            cook();
+            return;
         }
-        return state = STATES.WAIT;
+        cancel();
     }
 
-    void printState(STATES state) {
-        System.out.println("State = " + state);
-    }
-
-    STATES choice(STATES state, int buttonNumber){
-        if (check(state,buttonNumber)==true) {
-            return state = STATES.COOK;
+    boolean check(int buttonNumber) {
+        if (cash < price.get(buttonNumber)) {
+            return false;
         }
-        System.out.println("Not enough cash!");
-        return state=STATES.WAIT;
-    }
-
-    boolean check(STATES state, int buttonNumber){
-        if (cash<price[buttonNumber]){
-                return false;
-        }
-        state=STATES.CHECK;
+        state = STATES.CHECK;
         return true;
     }
 
+    void cook() {
+        state = STATES.COOK;
+        finish();
+    }
+
+    void finish() {
+        state = STATES.WAIT;
+        // обслуживание завершено
+    }
+
+    void cancel() {
+        if (state != STATES.ACCEPT) {
+            return;
+        }
+        state = STATES.WAIT;
+        // отмена и переход назад в WAIT
+    }
 }
