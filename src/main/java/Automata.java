@@ -6,7 +6,7 @@ class Automata {
         WAIT, OFF, ACCEPT, CHECK, COOK
     }
 
-    private static int cash;
+    private static float cash;
     private static Map<String, Float> menu;
     private static State state;
 
