@@ -37,55 +37,41 @@ public class Main {
             System.out.println(key + " = " + value);
         }
         System.out.println();
-        System.out.println("State " + myAutomata.getState());
-        System.out.println("Cash " + myAutomata.getCash());
-        System.out.println();
 
         //choose some product not from the menu
-        System.out.println("Checking choice method");
+        System.out.println("Teating choice method");
         System.out.println("We choose some product not from the menu");
         Pair myPair = myAutomata.choice("123");
-        System.out.println("Result message: " + myPair.getMessage());
-        System.out.println("Result sum = " + myPair.getSum());
+        System.out.println(myPair.getMessage());
         System.out.println("State " + myAutomata.getState());
         System.out.println("Cash " + myAutomata.getCash());
         System.out.println("Beverage " + myAutomata.getBeverage());
-        System.out.println("Message in result field " + myAutomata.getResult().getMessage());
-        System.out.println("Sum in result field " + myAutomata.getResult().getSum());
         System.out.println();
 
         //choose some product with lack of money
         System.out.println("Testing choice method");
         System.out.println("We choose some product with lack of money");
         myPair = myAutomata.choice("latte");
-        System.out.println("Result message: " + myPair.getMessage());
+        System.out.println( myPair.getMessage());
         System.out.println("Result sum = " + myPair.getSum());
         System.out.println("State " + myAutomata.getState());
         System.out.println("Cash " + myAutomata.getCash());
         System.out.println("Beverage " + myAutomata.getBeverage());
-        System.out.println("Message in result field " + myAutomata.getResult().getMessage());
-        System.out.println("Sum in result field " + myAutomata.getResult().getSum());
         System.out.println();
 
         //put 30 additional "coins"
         myAutomata.coin(30);
         System.out.println("The automata got 30 additional coins");
-        System.out.println("State " + myAutomata.getState());
         System.out.println("Cash " + myAutomata.getCash());
-        System.out.println("Beverage " + myAutomata.getBeverage());
         System.out.println();
 
         //choose some product with excess of money
         System.out.println("Testing choice method");
         System.out.println("We choose product with excess of money");
         myPair = myAutomata.choice("latte");
-        System.out.println("Result message: " + myPair.getMessage());
+        System.out.println(myPair.getMessage());
         System.out.println("Result sum = " + myPair.getSum());
         System.out.println("State " + myAutomata.getState());
-        System.out.println("Cash " + myAutomata.getCash());
-        System.out.println("Beverage " + myAutomata.getBeverage());
-        System.out.println("Message in result field " + myAutomata.getResult().getMessage());
-        System.out.println("Sum in result field " + myAutomata.getResult().getSum());
         System.out.println();
 
 
@@ -96,8 +82,6 @@ public class Main {
         System.out.println("Take your " + myAutomata.returnCash() + " coins");
         System.out.println("State " + myAutomata.getState());
         System.out.println("Cash " + myAutomata.getCash());
-        System.out.println("Message in result field " + myAutomata.getResult().getMessage());
-        System.out.println("Sum in result field " + myAutomata.getResult().getSum());
         System.out.println();
 
         //checking method off
