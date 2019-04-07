@@ -45,7 +45,7 @@ public class AutomataTest {
     }
 
     @Test
-    public void returnCash() {
+    public void returnCashAfterCoin() {
         Automata testAutomata = new Automata("menu.txt");
         testAutomata.on();
         testAutomata.coin(20);
@@ -56,7 +56,7 @@ public class AutomataTest {
     }
 
     @Test
-    public void returnCash2() {
+    public void returnCashAfterLackOfMoney() {
         Automata testAutomata = new Automata("menu.txt");
         testAutomata.on();
         testAutomata.coin(20);
@@ -68,136 +68,145 @@ public class AutomataTest {
     }
 
     @Test
-    public void choiceAndCheckTrue() {
+    public void choiceEqualSumRightBeverage() {
         Automata testAutomata = new Automata("menu.txt");
         testAutomata.on();
         testAutomata.coin(50);
-        testAutomata.choice("latte");
-        assertEquals("wrong state after choice and check methods", States.CHECK, testAutomata.getState());
-        assertEquals("wrong cash after choice and check methods", 50, testAutomata.getCash());
-        assertEquals("wrong beverage after choice and check methods", "latte",
+        Pair testPair = testAutomata.choice("latte");
+        Integer expected = 0;
+        assertEquals("wrong change", expected, testPair.getSum());
+        assertEquals("wrong message", "Take your latte and your change.",
+                testPair.getMessage());
+        assertEquals("wrong state after choice method", States.WAIT,
+                testAutomata.getState());
+        assertEquals("wrong cash after choice method",0,
+                testAutomata.getCash());
+        assertEquals("wrong beverage after choice method", null,
                 testAutomata.getBeverage());
     }
 
     @Test
-    public void choiceAndCheckFalse() {
+    public void choiceLackOfMoneyRightBeverage() {
         Automata testAutomata = new Automata("menu.txt");
         testAutomata.on();
         testAutomata.coin(40);
-        testAutomata.choice("latte");
-        assertEquals("wrong state after choice and check methods", States.ACCEPT, testAutomata.getState());
-        assertEquals("wrong cash after choice and check methods", 40, testAutomata.getCash());
-        assertEquals("wrong beverage after choice and check methods", null,
+        Pair testPair = testAutomata.choice("latte");
+        Integer expected = -10;
+        assertEquals("wrong change", expected, testPair.getSum());
+        assertEquals("wrong message", "Lack of money! Add more coins!",
+                testPair.getMessage());
+        assertEquals("wrong state after choice method", States.ACCEPT,
+                testAutomata.getState());
+        assertEquals("wrong cash after choice method",40,
+                testAutomata.getCash());
+        assertEquals("wrong beverage after choice method", null,
                 testAutomata.getBeverage());
     }
 
     @Test
-    public void choiceWrongNameOfBeverage() {
+    public void choiceWrongBeverage() {
         Automata testAutomata = new Automata("menu.txt");
         testAutomata.on();
         testAutomata.coin(50);
-        testAutomata.choice("123");
+        Pair testPair = testAutomata.choice("123");
+        Integer expected = 0;
+        assertEquals("wrong change", expected, testPair.getSum());
+        assertEquals("wrong message", "There is no such beverage in menu! Choose again!",
+                testPair.getMessage());
         assertEquals("wrong state after choice method", States.ACCEPT, testAutomata.getState());
         assertEquals("wrong cash after choice method", 50, testAutomata.getCash());
         assertEquals("wrong beverage after choice method", null, testAutomata.getBeverage());
     }
 
     @Test
-    public void choiceAndCheckAddMoney() {
+    public void choiceAddExcessMoney() {
         Automata testAutomata = new Automata("menu.txt");
         testAutomata.on();
         testAutomata.coin(40);
         testAutomata.choice("latte");
         testAutomata.coin(50);
-        testAutomata.choice("latte");
-        assertEquals("wrong state after choice and check methods", States.CHECK,
+        Pair testPair = testAutomata.choice("latte");
+        Integer expected = 40;
+        assertEquals("wrong change", expected, testPair.getSum());
+        assertEquals("wrong message", "Take your latte and your change.",
+                testPair.getMessage());
+        assertEquals("wrong state after choice choice method", States.WAIT,
                 testAutomata.getState());
-        assertEquals("wrong cash after choice and check methods", 90,
+        assertEquals("wrong cash after choice choice method", 0,
                 testAutomata.getCash());
-        assertEquals("wrong beverage after choice and check methods", "latte",
+        assertEquals("wrong beverage after choice method", null,
                 testAutomata.getBeverage());
     }
 
     @Test
-    public void choiceAndCheckReturnMoney() {
+    public void returnMoneyInWrongPlace() {
         Automata testAutomata = new Automata("menu.txt");
         testAutomata.on();
-        testAutomata.coin(40);
+        testAutomata.coin(60);
         testAutomata.choice("latte");
-        assertEquals("wrong result of returnCash", 40, testAutomata.returnCash());
-        assertEquals("wrong state after choice, check and returnCash methods",
+        assertEquals("wrong result of returnCash", 0, testAutomata.returnCash());
+        assertEquals("wrong state after choice and returnCash methods",
                 States.WAIT, testAutomata.getState());
-        assertEquals("wrong cash after choice, check and returnCash methods",
+        assertEquals("wrong cash after choice and returnCash methods",
                 0, testAutomata.getCash());
-        assertEquals("wrong beverage after choice, check and returnCash  methods",
+        assertEquals("wrong beverage after choice and returnCash methods",
                 null, testAutomata.getBeverage());
     }
 
     @Test
-    public void cook() {
+    public void returnMoneyInWrongPlace2() {
         Automata testAutomata = new Automata("menu.txt");
         testAutomata.on();
-        testAutomata.coin(50);
+        assertEquals("wrong result of returnCash", 0, testAutomata.returnCash());
+        assertEquals("wrong state after returnCash method",
+                States.WAIT, testAutomata.getState());
+        assertEquals("wrong cash after returnCash method",
+                0, testAutomata.getCash());
+        assertEquals("wrong beverage after returnCash  method",
+                null, testAutomata.getBeverage());
+    }
+
+    @Test
+    public void choiceInWrongPlace() {
+        Automata testAutomata = new Automata("menu.txt");
+        testAutomata.on();
+        Pair testPair = testAutomata.choice("latte");
+        assertNull(testPair);
+        assertEquals("wrong state after choice method", States.WAIT,
+                testAutomata.getState());
+        assertEquals("wrong cash after choice method", 0,
+                testAutomata.getCash());
+        assertEquals("wrong beverage after choice method", null,
+                testAutomata.getBeverage());
+    }
+
+    @Test
+    public void choiceInWrongPlace2() {
+        Automata testAutomata = new Automata("menu.txt");
+        Pair testPair = testAutomata.choice("latte");
+        assertNull(testPair);
+        assertEquals("wrong state after choice method", States.OFF,
+                testAutomata.getState());
+        assertEquals("wrong cash after choice method", 0,
+                testAutomata.getCash());
+        assertEquals("wrong beverage after choice method", null,
+                testAutomata.getBeverage());
+    }
+
+    @Test
+    public void choiceInWrongPlace3() {
+        Automata testAutomata = new Automata("menu.txt");
+        testAutomata.on();
+        testAutomata.coin(70);
         testAutomata.choice("latte");
-        Pair testPair = testAutomata.cook();
-        Integer expected = 0;
-        assertEquals("wrong change", expected, testPair.getSum());
-        assertEquals("wrong beverage", "latte", testPair.getBeverage());
-        assertEquals("wrong state after cook and finish methods",
-                States.WAIT, testAutomata.getState());
-        assertEquals("wrong cash after cook and finish methods",
-                0, testAutomata.getCash());
-        assertEquals("wrong beverage after cook and finish methods",
-                null, testAutomata.getBeverage());
-    }
-
-    @Test
-    public void cookWithExcessOfMoney() {
-        Automata testAutomata = new Automata("menu.txt");
-        testAutomata.on();
-        testAutomata.coin(55);
-        testAutomata.choice("latte");
-        Pair testPair = testAutomata.cook();
-        Integer expected = 5;
-        assertEquals("wrong change", expected, testPair.getSum());
-        assertEquals("wrong beverage", "latte", testPair.getBeverage());
-        assertEquals("wrong state after cook and finish methods",
-                States.WAIT, testAutomata.getState());
-        assertEquals("wrong cash after cook and finish methods",
-                0, testAutomata.getCash());
-        assertEquals("wrong beverage after cook and finish methods",
-                null, testAutomata.getBeverage());
-    }
-
-    @Test
-    public void cookInWrongOrder() {
-        Automata testAutomata = new Automata("menu.txt");
-        testAutomata.on();
-        Pair testPair = testAutomata.cook();
-        assertEquals("method cook should return null after being called in wrong order",
-                null, testPair);
-        assertEquals("wrong state after cook called in wrong order",
-                States.WAIT, testAutomata.getState());
-        assertEquals("wrong cash after cook called in wrong order",
-                0, testAutomata.getCash());
-        assertEquals("wrong beverage after cook called in wrong order",
-                null, testAutomata.getBeverage());
-    }
-
-    @Test
-    public void cookInWrongOrder2() {
-        Automata testAutomata = new Automata("menu.txt");
-        testAutomata.on();
-        testAutomata.coin(55);
-        Pair testPair = testAutomata.cook();
-        assertEquals("method cook should return null after being called in wrong order",
-                null, testPair);
-        assertEquals("wrong state after cook called in wrong order",
-                States.ACCEPT, testAutomata.getState());
-        assertEquals("wrong cash after cook called in wrong order",
-                55, testAutomata.getCash());
-        assertEquals("wrong beverage after cook called in wrong order",
-                null, testAutomata.getBeverage());
+        Pair testPair = testAutomata.choice("latte");
+        assertNull(testPair);
+        assertEquals("wrong state after choice method", States.WAIT,
+                testAutomata.getState());
+        assertEquals("wrong cash after choice method", 0,
+                testAutomata.getCash());
+        assertEquals("wrong beverage after choice method", null,
+                testAutomata.getBeverage());
     }
 
     @Test
