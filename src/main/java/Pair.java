@@ -1,25 +1,25 @@
 public class Pair {
     private Integer sum;
-    private String beverage;
+    private String message;
 
-    public Pair(Integer sum, String beverage) {
+    public Pair(Integer sum, String message) {
         this.sum = sum;
-        this.beverage = beverage;
+        this.message = message;
     }
 
     public Integer getSum() {
         return sum;
     }
 
-    public String getBeverage() {
-        return beverage;
+    public String getMessage() {
+        return message;
     }
 
     public void setSum(Integer sum) {
         this.sum = sum;
     }
 
-    public void setBeverage(String beverage) {
-        this.beverage = beverage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

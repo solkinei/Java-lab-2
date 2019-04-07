@@ -10,6 +10,7 @@ public class Automata {
     private HashMap<String, Integer> menu;
     private States state;
     private String beverage; //for chosen beverage
+    private Pair result = new Pair(0, null);
 
     //constructor for creating the new Automata
     public Automata(String nameOfFile) {
@@ -32,7 +33,6 @@ public class Automata {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         this.beverage = null;
     }
 
@@ -46,6 +46,8 @@ public class Automata {
         return state;
     }
 
+    public Pair getResult() { return result; }
+
     public HashMap<String, Integer> getMenu() {
         return menu;
     }
@@ -54,56 +56,42 @@ public class Automata {
         return beverage;
     }
 
-    private void setCash(int cash) {
-        if ((States.COOK == getState()) || (States.ACCEPT == getState())) {
-            if (cash >= 0) {
-                this.cash = cash;
-            }
-        }
-    }
-
-    private void setState(States state) {
-        this.state = state;
-    }
-
-
-    private void setBeverage(String beverage) {
-        if ((States.CHECK == getState()) || (States.COOK == getState())){
-            this.beverage = beverage;
-        }
+    public void setResult(Integer sum, String message) {
+        this.result.setMessage(message);
+        this.result.setSum(sum);
     }
 
     //switching-on
     public void on() {
         //checking the current state
-        if (States.OFF == getState()) {
-            setState(States.WAIT);
+        if (States.OFF == state) {
+            state = States.WAIT;
         }
     }
 
     //switching off
     public void off() {
         //checking the current state
-        if (States.WAIT == getState()) {
-            setState(States.OFF);
+        if (States.WAIT == state) {
+            state = States.OFF;
         }
     }
 
     //getting coins
     public int coin(int cash) {
-       if ((States.WAIT == getState()) || (States.ACCEPT == getState())) {
-           setState(States.ACCEPT);
-           setCash(getCash() + cash);
+       if ((States.WAIT == state) || (States.ACCEPT == state)) {
+           state = States.ACCEPT;
+           this.cash = this.cash + cash;
        }
         return getCash();
     }
 
     //cancelling the current session and returning money
     public int returnCash() {
-        if (States.ACCEPT == getState()) {
+        if (States.ACCEPT == state) {
             int cash = getCash();
-            setCash(0);
-            setState(States.WAIT);
+            this.cash = 0;
+            state = States.WAIT;
             return cash;
         }
         else {
@@ -112,57 +100,67 @@ public class Automata {
     }
 
     //user's choice of beverage
-    public void choice(String beverage) {
-        if (States.ACCEPT != getState()) {
-            return;
+    public Pair choice(String beverage) {
+        if (States.ACCEPT != state) {
+            return null;
         }
+        Pair res = new Pair(0, null);
         //checking if menu contains this beverage
         if (!getMenu().containsKey(beverage)) {
-            return;
+            res.setSum(0);
+            res.setMessage("There is no such beverage in menu! Choose again!");
         }
-        setState(States.CHECK);
-        if (!check(beverage)) {
-            lackOfCash();
+        else{
+            state = States.CHECK;
+            int check = check(beverage);
+            if (check < 0) {
+                lackOfCash(check);
+            }
+            else {
+                cook(check);
+            }
+            res.setSum(result.getSum());
+            res.setMessage(result.getMessage());
+            setResult(0, null);
         }
+        return res;
     }
 
-    private void lackOfCash(){
-        setState(States.ACCEPT);
+    //re
+    private void lackOfCash(int check){
+        state = States.ACCEPT;
+        setResult(check, "Lack of money! Add more coins!");
     }
 
     //checking the amount of money
-    private boolean check(String beverage) {
-        if (getCash() >= getMenu().get(beverage)) {
-            setBeverage(beverage);
-            return true;
+    private int check(String beverage) {
+        int res = cash - menu.get(beverage);
+        if (res >= 0) {
+            this.beverage = beverage;
         }
-        return false;
+        return res;
     }
 
     //delay as imitation of cooking process, returning the name of product and excess cash
-    public Pair cook() {
-        if (States.CHECK != getState()) {
-            return null;
+    private void cook(int check) {
+        if (States.CHECK == state) {
+            state = States.COOK;
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            finish(check);
         }
-        setState(States.COOK);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Integer cashToReturn = getCash() - getMenu().get(beverage);
-        Pair result = new Pair(cashToReturn, beverage);
-        finish();
-        return result;
     }
 
         //finishing
-    private void finish() {
-        if (States.COOK == getState()) {
-            setBeverage(null);
-            setCash(0);
-            setState(States.WAIT);
-            return;
+    private void finish(int check) {
+        if (States.COOK == state) {
+            setResult(check, "Take your " + beverage + " and your change.");
+            beverage = null;
+            cash = 0;
+            state = States.WAIT;
         }
     }
 /*
