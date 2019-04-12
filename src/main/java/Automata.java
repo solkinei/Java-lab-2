@@ -6,14 +6,17 @@ class Automata {
         WAIT, OFF, ACCEPT, CHECK, COOK
     }
 
-    private static float cash;
+    private float cash;
     private static Map<String, Float> menu;
-    private static State state;
+    private State state;
+
+    static {
+        menu = new HashMap<String, Float>();
+    }
 
     public Automata(int cash) {
         this.cash = cash;
         this.state = State.OFF;
-        this.menu = new HashMap<String, Float>();
     }
 
     public State getState() {
@@ -63,12 +66,19 @@ class Automata {
             state = State.CHECK;
             try {
                 float cost = menu.get(drink);
-                return menu.get(drink);
+                if (!check(cost)) {
+                    cancel();
+                    return 0F;
+                } else {
+                    cook(drink);
+                    finish();
+                    return cash;
+                }
             } catch (Exception e) {
-                return -1;
+                return -1F; //choice error
             }
         } else {
-            return 0;
+            return -2F; // state error
         }
     }
 
@@ -86,14 +96,14 @@ class Automata {
         }
     }
 
-    public void cook(String drink) {
+    private void cook(String drink) {
         if (state == State.CHECK) {
             cash -= menu.get(drink);
             state = State.COOK;
         }
     }
 
-    public void finish() {
+    private void finish() {
         if (state == State.COOK) {
             state = State.WAIT;
         }

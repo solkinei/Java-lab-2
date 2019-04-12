@@ -16,7 +16,6 @@ public class AutomataTest {
         assertEquals(15, A.getCash(), 0.005);
         A.addToMenu("Stolichnaya", 10.4F);
         A.choice("Stolichnaya");
-        A.cook("Stolichnaya");
         assertEquals(4.60F, A.getCash(), 0.005);
     }
 
@@ -60,13 +59,11 @@ public class AutomataTest {
         A.on();
         A.coin(15);
         A.addToMenu("Stolichnaya", 10.4F);
-        assertEquals(10.4F, A.choice("Stolichnaya"), 0.005);
-        A.cook("Stolichnaya");
-        A.finish();
+        assertEquals(4.6F, A.choice("Stolichnaya"), 0.005);
         A.coin(10);
         assertEquals(-1, A.choice("Milk"), 0.005);
         A.cancel();
-        assertEquals(0, A.choice("Stolichnaya"), 0.005);
+        assertEquals(-2, A.choice("Stolichnaya"), 0.005);
     }
 
     @Test
@@ -93,23 +90,12 @@ public class AutomataTest {
         A.on();
         A.coin(15);
         A.addToMenu("Stolichnaya", 10.4F);
-        assertEquals(10.4F, A.choice("Stolichnaya"), 0.005);
+        assertEquals(4.6F, A.choice("Stolichnaya"), 0.005);
         A.cancel();
         A.coin(15);
         assertEquals(-1, A.choice("Milk"), 0.005);
         A.cancel();
-        assertEquals(0, A.choice("Stolichnaya"), 0.005);
-    }
-
-    @Test
-    public void check() {
-        Automata A = new Automata(0);
-        A.on();
-        A.coin(18);
-        A.addToMenu("Stolichnaya", 10.4F);
-        A.choice("Stolichnaya");
-        assertTrue(A.check(15));
-        assertTrue(!A.check(20));
+        assertEquals(-2, A.choice("Stolichnaya"), 0.005);
     }
 
     @Test
@@ -129,23 +115,6 @@ public class AutomataTest {
         A.coin(15);
         A.addToMenu("Stolichnaya", 10.4F);
         A.choice("Stolichnaya");
-        A.cook("Stolichnaya");
         assertEquals(4.60F, A.getCash(), 0.005);
-        assertEquals(Automata.State.COOK, A.getState());
     }
-
-    @Test
-    public void finish() {
-        Automata A = new Automata(0);
-        A.on();
-        A.coin(15);
-        A.finish();
-        assertNotEquals(Automata.State.WAIT, A.getState());
-        A.addToMenu("Stolichnaya", 10.4F);
-        A.choice("Stolichnaya");
-        A.cook("Stolichnaya");
-        A.finish();
-        assertEquals(Automata.State.WAIT, A.getState());
-    }
-
 }
