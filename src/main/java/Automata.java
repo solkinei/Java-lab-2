@@ -12,11 +12,12 @@ class Automata {
     private ArrayList<Integer> prices = new ArrayList<Integer>(); // - цены напитков (соответствует массиву с напитками);
     private String[] menu;
     private STATES state; //- текущее состояние автомата;
+    private PrintStream ps;
 
-
-    public Automata(String fileName) {
+    public Automata(String fileName, PrintStream ps) {
         this.state = STATES.OFF;
         this.cash = 0;
+        this.ps = ps;
 
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
@@ -80,14 +81,15 @@ class Automata {
         return -1;
     }
 
-    public void choice(String nameOfDrink) {
+    public int choice(String nameOfDrink) {
         if (state == STATES.ACCEPT) {
             if (check(nameOfDrink)) {
                 cash -= prices.get(drinks.indexOf(nameOfDrink));
-                cook(nameOfDrink);
+                return cook(nameOfDrink);
             }
-            cancel();
+            return cancel();
         }
+        return -5;
     }
 
     private boolean check(String nameOfDrink) {
@@ -98,11 +100,12 @@ class Automata {
         return false;
     }
 
-    private void cook(String nameOfDrink) {
+    private int cook(String nameOfDrink) {
         if (state == STATES.CHECK) {
             state = STATES.COOK;
-            finish(nameOfDrink);
+            return finish(nameOfDrink);
         }
+        return -10;
     }
 
     private int finish(String nameOfDrink) {
@@ -110,20 +113,20 @@ class Automata {
             int change = getCash();
             cash = 0;
             int timeToWait = 10; //second
-            System.out.print("Cooking your drink " + nameOfDrink);
+            ps.print("Cooking your drink " + nameOfDrink);
             try {
                 for (int i = 0; i < timeToWait; i++) {
                     Thread.sleep(1000);
-                    System.out.print(".");
+                    ps.print(".");
                 }
-                System.out.println();
+                ps.println();
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt();
             }
             state = STATES.WAIT;
             return change;
         }
-        return -1;
+        return -20;
     }
 }
 

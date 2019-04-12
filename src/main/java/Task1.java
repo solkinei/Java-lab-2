@@ -1,6 +1,6 @@
 public class Task1 {
     public static void main(String[] args) {
-        Automata coffee = new Automata("src\\main\\java\\menu.txt");
+        Automata coffee = new Automata("menu.txt", System.out);
         coffee.getState();
         System.out.println("The state of automata is " + coffee.getState());
         System.out.println();
@@ -17,7 +17,7 @@ public class Task1 {
         System.out.println();
 
         try {
-            Thread.sleep(10000);
+            Thread.sleep(5000);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
         }
