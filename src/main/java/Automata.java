@@ -15,7 +15,7 @@ public class Automata {
         setMenu();
     }
 
-    private Map setMenu(){
+    private void setMenu(){
         String str = "";
         try {
             FileReader reader = new FileReader("menu.txt");
@@ -33,33 +33,26 @@ public class Automata {
             int y = Integer.parseInt(bufX [1]);
             Menu.put (x,y);
         }
-        return Menu;
     }
 
-    void getMenu(){
-        for(Map.Entry<String, Integer> entry: Menu.entrySet())
-            System.out.println(entry.getKey() + " - " + entry.getValue());
+    Map getMenu(){
+        return Menu;
     }
 
     void on_off(){
         if (States == STATES.OFF) {
             States = STATES.WAIT;
-            System.out.println("Hello!");
         }
         else if (States == STATES.WAIT) {
             States = STATES.OFF;
-            System.out.println("Goodbye!");
         }
-        else System.out.println("Error!");
     }
 
     int coin (int cash){
         if ((States == STATES.WAIT)||(States == STATES.ACCEPT)) {
             States = STATES.ACCEPT;
             this.cash += cash;
-            System.out.println("Money in your account is " +this.cash + " rubles.");
         }
-        else System.out.println("Error!");
         return this.cash;
     }
 
@@ -68,10 +61,8 @@ public class Automata {
             cost = Menu.get(drink);
             if (check()) {
                 States = STATES.CHECK;
-                System.out.println("You choose " + drink + ", cost " + cost + " rubles. Are you sure?");
-            } else System.out.println("Not enough money");
+            }
         }
-        else System.out.println("Error!");
     }
 
     private Boolean check (){
@@ -82,18 +73,14 @@ public class Automata {
         if (States == STATES.CHECK) {
             States = STATES.COOK;
             cash-=cost;
-            System.out.println("Take your drink!");
         }
-        else System.out.println("Error!");
     }
 
     void cancel (){
         if ((States == STATES.CHECK)||(States == STATES.ACCEPT)||(States == STATES.COOK)) {//COOK
             States = STATES.WAIT;
-            System.out.println("Take change " + cash + " rubles.");
             cash = 0;
         }
-        else System.out.println("Error!");
     }
 
     STATES getStates(){
