@@ -40,46 +40,83 @@ public class Automata {
     }
 
     void on_off(){
-        if (States == STATES.OFF) {
-            States = STATES.WAIT;
+        try {
+            if (States == STATES.OFF) {
+                States = STATES.WAIT;
+            } else if (States == STATES.WAIT) {
+                States = STATES.OFF;
+            }else
+                throw new Exception("The device is turned off");
         }
-        else if (States == STATES.WAIT) {
-            States = STATES.OFF;
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
     int coin (int cash){
-        if ((States == STATES.WAIT)||(States == STATES.ACCEPT)) {
-            States = STATES.ACCEPT;
-            this.cash += cash;
+        try {
+            if ((States == STATES.WAIT) || (States == STATES.ACCEPT)) {
+                States = STATES.ACCEPT;
+                this.cash += cash;
+            }else
+                throw new Exception("The device is turned off");
         }
-        return this.cash;
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+        finally {
+            return this.cash;
+        }
     }
 
     void choice(String drink){
         if (States == STATES.ACCEPT) {
             cost = Menu.get(drink);
-            if (check()) {
-                States = STATES.CHECK;
+            try {
+                if (check()) {
+                    States = STATES.CHECK;
+                }else
+                    throw new Exception("Not enough money");
+            }
+            catch (Exception ex){
+                System.out.println(ex.getMessage());
+                ex.printStackTrace();
             }
         }
     }
+
 
     private Boolean check (){
         return (cash >= cost);
     }
 
     void cook (){
-        if (States == STATES.CHECK) {
-            States = STATES.COOK;
-            cash-=cost;
+        try {
+            if (States == STATES.CHECK) {
+                States = STATES.COOK;
+                cash -= cost;
+            } else
+                throw new Exception("Drink is not selected");
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
     void cancel (){
-        if ((States == STATES.CHECK)||(States == STATES.ACCEPT)||(States == STATES.COOK)) {//COOK
-            States = STATES.WAIT;
-            cash = 0;
+        try {
+            if ((States == STATES.CHECK) || (States == STATES.ACCEPT) || (States == STATES.COOK)) {
+                States = STATES.WAIT;
+                cash = 0;
+            } else
+                throw new Exception("The device is turned off");
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
