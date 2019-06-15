@@ -1,0 +1,5 @@
+tea=35
+latte=50
+capuccino=45
+water=20
+mochaccino=55
