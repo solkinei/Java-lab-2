@@ -66,7 +66,7 @@ public class Automata {
         }
     }
 
-    public boolean check(int position){ // public - specifically for testing
+    public boolean check(int position){
         if (cash >= prices.get(position - 1)){
             state = States.CHECK;
             return true;
